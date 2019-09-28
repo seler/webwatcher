@@ -12,7 +12,7 @@ def sendmail(user, watch, items):
 
     subject = (f"[WebWatcher] {watch.name}",)
     msg = EmailMultiAlternatives(
-        subject, text_content, settings.EMAIL_FROM, [user.email]
+        subject, text_content, settings.DEFAULT_FROM_EMAIL, [user.email]
     )
     msg.attach_alternative(html_content, "text/html")
     msg.send()
