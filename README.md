@@ -4,9 +4,10 @@ Rewrite of [Any2Feed](https://bitbucket.org/seler/any2feed)
 
 development:
 
-    $ pipfile install
-    $ docker-compose up postgres rabbitmq celearybeat
+    $ pipenv install
     $ python manage.py migrate
     $ python manage.py createsuperuser
-    $ python manage.py runserver
+    $ make runserver
+    $ make runworker
+    $ make runbeat
 
