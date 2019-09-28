@@ -12,6 +12,10 @@ django-celery-results = "*"
 django-celery-beat = "*"
 psycopg2 = "*"
 gunicorn = "*"
+requests = "*"
+lxml = "*"
+feedparser = "*"
+dateparser = "*"
 
 [requires]
 python_version = "3.7"

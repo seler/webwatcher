@@ -1,48 +1,13 @@
 version: '3.5'
 
-x-defaults:
-  &defaults
-  image: webwatcher
-  build:
-    context: ./
-  volumes:
-    - '.:/app'
-  environment:
-    - DJANGO_SETTINGS_MODULE=webwatcher.settings
-    - DATABASE_ENGINE=django.db.backends.postgresql
-    - DATABASE_NAME=postgres
-    - DATABASE_USER=postgres
-    - DATABASE_PASSWORD=postgres
-    - DATABASE_HOST=postgres
-    - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672
-    - SECRET_KEY=WF@@rcjG8D#Y^U9Q!4vZ9*oUZ%eFYYdz
-  stdin_open: true
-  tty: true
-  depends_on:
-    - postgres
-    - rabbitmq
-
 services:
-  web:
-    <<: *defaults
-    command: ["gunicorn", "webwatcher.wsgi", "-w", "8", "-t", "120", "-b", "0.0.0.0:8000"]
-    ports:
-      - 8000:8000
-
-  worker:
-    <<: *defaults
-    command: [celery, worker, -A webwatcher.celery, --pool=prefork, --max-tasks-per-child=1, --concurrency=1, --loglevel=INFO]
-
-  beat:
-    <<: *defaults
-    command: [celery, -A, webwatcher.celery, beat, -l, info, --scheduler, "django_celery_beat.schedulers:DatabaseScheduler"]
-
-
   postgres:
     image: postgres
     restart: always
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
       - 5432:5432
 
