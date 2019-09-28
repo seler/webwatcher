@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name="WebWatcher",
-    version="0.1dev",
-    packages=["webwatcher"],
+    version="0.1.dev0",
+    packages=find_packages(),
     python_requires=">=3.7",
     install_requires=[
         "django",
