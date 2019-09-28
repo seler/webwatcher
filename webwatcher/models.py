@@ -18,14 +18,15 @@ class Watch(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.parser:
-            self.parser = get_parser_name_by_url(self.url).name
+        if not self._parser:
+            self._parser = get_parser_name_by_url(self.url)
         return super().save(*args, **kwargs)
 
     @property
     def parser(self):
-        ParserClass = get_parser_by_name(self._parser)
-        return ParserClass(self)
+        if self._parser:
+            ParserClass = get_parser_by_name(self._parser)
+            return ParserClass(self)
 
 
 class Item(models.Model):
