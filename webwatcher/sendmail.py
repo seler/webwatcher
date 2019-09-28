@@ -10,7 +10,7 @@ def sendmail(user, watch, items):
     html_content = html_template.render(context)
     text_content = plain_template.render(context)
 
-    subject = (f"[WebWatcher] {watch.name}",)
+    subject = f"[WebWatcher] {watch.name}"
     msg = EmailMultiAlternatives(
         subject, text_content, settings.DEFAULT_FROM_EMAIL, [user.email]
     )
