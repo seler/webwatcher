@@ -33,7 +33,10 @@ class OLX(Parser):
         data = front + back
         feed = feedparser.parse(data)
         for entry in feed.entries:
-            image = html.fromstring(entry.description).findall("img")[0].get("src")
+            if "img" in entry.description:
+                image = html.fromstring(entry.description).findall("img")[0].get("src")
+            else:
+                image = None
             yield Item(
                 watch=self.watch,
                 title=entry.title,

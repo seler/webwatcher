@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 from django import forms
 from django_celery_beat.models import PeriodicTask
 from django.forms.models import fields_for_model
+from .tasks import check
 
 periodic_task_field_names = ["interval", "crontab", "solar", "clocked", "enabled"]
 periodic_task_fields = fields_for_model(PeriodicTask, fields=periodic_task_field_names)
@@ -32,6 +33,14 @@ class WatchForm(forms.ModelForm):
         fields = "__all__"
 
 
+def check_now(modeladmin, request, queryset):
+    for watch in queryset:
+        check.delay(watch.id)
+
+
+check_now.short_description = "Check now"
+
+
 @admin.register(Watch)
 class WatchAdmin(admin.ModelAdmin):
     form = WatchForm
@@ -39,7 +48,7 @@ class WatchAdmin(admin.ModelAdmin):
         (
             None,
             {
-                "fields": ("user", "name", "url", "parser_display"),
+                "fields": ("user", "name", "url", "notification", "parser_display"),
                 "classes": ("extrapretty", "wide"),
             },
         ),
@@ -49,24 +58,36 @@ class WatchAdmin(admin.ModelAdmin):
         ),
     )
     readonly_fields = ["parser_display"]
+    actions = [check_now]
 
     def parser_display(self, obj):
         return obj.parser.name
+
+    parser_display.short_description = "parser"
 
     def save_model(self, request, obj, form, change):
         if obj.periodic_task_id is None:
             periodic_task = PeriodicTask()
         else:
             periodic_task = obj.periodic_task
+
         periodic_task.name = obj.name
         periodic_task.task = "webwatcher.tasks.check"
         for field in periodic_task_field_names:
             setattr(periodic_task, field, form.cleaned_data[field])
         periodic_task.save()
+
         obj.periodic_task_id = periodic_task.id
         obj.save()
+
         periodic_task.args = f"[{obj.id}]"
         periodic_task.save()
+
+        check.delay(obj.id)
+
+    def delete_model(self, request, obj):
+        obj.delete()
+        obj.periodic_task.delete()
 
 
 @admin.register(Item)

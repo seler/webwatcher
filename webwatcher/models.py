@@ -12,6 +12,16 @@ class Watch(models.Model):
     url = models.CharField(max_length=255, verbose_name=_("url"))
     _parser = models.CharField(max_length=255, blank=True, editable=False)
 
+    NOTIFICATION_INSTANT = 1
+    NOTIFICATION_DAILY = 2
+    NOTIFICATION_CHOICES = (
+        (NOTIFICATION_INSTANT, _("instant")),
+        (NOTIFICATION_DAILY, _("daily")),
+    )
+    notification = models.PositiveSmallIntegerField(
+        choices=NOTIFICATION_CHOICES, null=True, blank=True
+    )
+
     periodic_task = models.OneToOneField(
         "django_celery_beat.PeriodicTask", on_delete=models.CASCADE
     )
@@ -36,13 +46,16 @@ class Watch(models.Model):
 
 
 class Item(models.Model):
-    watch = models.ForeignKey(Watch, verbose_name=_("watch"), on_delete=models.CASCADE)
+    watch = models.ForeignKey(
+        Watch, verbose_name=_("watch"), on_delete=models.CASCADE, related_name="items"
+    )
     title = models.CharField(max_length=255, verbose_name=_("title"))
     link = models.CharField(max_length=255, verbose_name=_("link"))
     description = models.TextField(verbose_name=_("description"))
     uid = models.CharField(max_length=255, verbose_name=_("unique id"))
     timestamp = models.DateTimeField(verbose_name=_("timestamp"))
-    image = models.CharField(max_length=255, verbose_name=_("image"))
+    image = models.CharField(max_length=255, verbose_name=_("image"), null=True)
+    notified = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = _(u"item")

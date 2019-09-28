@@ -1,5 +1,6 @@
 from celery import shared_task
 from .models import Watch, Item
+from .sendmail import sendmail
 
 
 @shared_task
@@ -11,5 +12,6 @@ def check(watch_id):
     to_save = [item for item in items if item.uid not in existing_uids]
     if to_save:
         saved = Item.objects.bulk_create(to_save)
-        # todo: send email/notification
+        if watch.notification == watch.NOTIFICATION_INSTANT:
+            sendmail(watch.user, watch, saved)
         return len(saved)
