@@ -5,13 +5,15 @@ from .parser import get_parser_name_by_url, get_parser_by_name
 
 
 class Watch(models.Model):
-    user = models.ForeignKey("auth.User", verbose_name=_("user"), on_delete="CASCADE")
+    user = models.ForeignKey(
+        "auth.User", verbose_name=_("user"), on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=255, verbose_name=_("name"))
     url = models.CharField(max_length=255, verbose_name=_("url"))
     _parser = models.CharField(max_length=255, blank=True, editable=False)
 
     periodic_task = models.OneToOneField(
-        "django_celery_beat.PeriodicTask", on_delete="CASCADE"
+        "django_celery_beat.PeriodicTask", on_delete=models.CASCADE
     )
 
     class Meta:
@@ -34,7 +36,7 @@ class Watch(models.Model):
 
 
 class Item(models.Model):
-    watch = models.ForeignKey(Watch, verbose_name=_("watch"), on_delete="CASCADE")
+    watch = models.ForeignKey(Watch, verbose_name=_("watch"), on_delete=models.CASCADE)
     title = models.CharField(max_length=255, verbose_name=_("title"))
     link = models.CharField(max_length=255, verbose_name=_("link"))
     description = models.TextField(verbose_name=_("description"))
