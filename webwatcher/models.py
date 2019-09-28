@@ -10,6 +10,10 @@ class Watch(models.Model):
     url = models.CharField(max_length=255, verbose_name=_("url"))
     _parser = models.CharField(max_length=255, blank=True, editable=False)
 
+    periodic_task = models.OneToOneField(
+        "django_celery_beat.PeriodicTask", on_delete="delete"
+    )
+
     class Meta:
         verbose_name = _(u"watch")
         verbose_name_plural = _(u"watches")

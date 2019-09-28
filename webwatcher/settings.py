@@ -76,12 +76,8 @@ WSGI_APPLICATION = "webwatcher.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
 
@@ -120,4 +116,4 @@ STATIC_URL = "/static/"
 
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_CACHE_BACKEND = "django-cache"
-CELERY_BROKER_URL = "amqp://"
+CELERY_BROKER_URL = "sqla+sqlite:///" + os.path.join(BASE_DIR, "db.sqlite3")

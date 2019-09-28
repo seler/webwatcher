@@ -1,15 +1,10 @@
-.PHONY: rundeps
-
-rundeps:
-	docker-compose up -d
-
-runserver: rundeps
+runserver:
 	python manage.py runserver
 
-runworker: rundeps
-	celery -A webwatcher.celery worker -l info --pidfile=
+runworker:
+	celery -A webwatcher.celery worker -l info -E --pidfile=
 
-runbeat: rundeps
+runbeat:
 	celery -A webwatcher.celery beat -l info --pidfile= --scheduler django_celery_beat.schedulers:DatabaseScheduler
 
 migrate:
