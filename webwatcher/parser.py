@@ -11,14 +11,7 @@ class Parser:
         self.watch = watch
 
 
-class RSS(Parser):
-    pass
-
-
-class OLX(Parser):
-    url_prog = re.compile("https?://(www.)?olx.pl.*")
-    name = "OLX"
-
+class PageWithRSS(Parser):
     def get_items(self):
         from .models import Item
 
@@ -27,9 +20,10 @@ class OLX(Parser):
         rss_link = content.xpath('*/link[@type="application/rss+xml"]')[0]
         response = requests.get(rss_link.get("href"))
         data = response.content.strip()
-        # remove link as its cousing problems with feedparser
-        front = data[: data.find(b"<link>")]
-        back = data[data.find(b"</link>") + 7 :]  # noqa
+        if data.find(b"<link>"):
+            # remove link as its cousing problems with feedparser
+            front = data[: data.find(b"<link>")]
+            back = data[data.find(b"</link>") + 7 :]  # noqa
         data = front + back
         feed = feedparser.parse(data)
         for entry in feed.entries:
@@ -48,14 +42,19 @@ class OLX(Parser):
             )
 
 
-class Allegro(Parser):
+class OLX(PageWithRSS):
     url_prog = re.compile("https?://(www.)?olx.pl.*")
-    name = "Allegro"
+    name = "OLX"
+
+
+class OTOMOTO(PageWithRSS):
+    url_prog = re.compile("https?://(www.)?otomoto.pl.*")
+    name = "OTOMOTO"
 
 
 class Parsers(enum.Enum):
     olx = OLX
-    allegro = Allegro
+    otomoto = OTOMOTO
 
 
 def get_parser_name_by_url(url):
