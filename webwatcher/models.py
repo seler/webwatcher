@@ -9,7 +9,7 @@ class Watch(models.Model):
         "auth.User", verbose_name=_("user"), on_delete=models.CASCADE
     )
     name = models.CharField(max_length=255, verbose_name=_("name"))
-    url = models.CharField(max_length=255, verbose_name=_("url"))
+    url = models.URLField(max_length=512, verbose_name=_("url"))
     _parser = models.CharField(max_length=255, blank=True, editable=False)
 
     NOTIFICATION_INSTANT = 1
