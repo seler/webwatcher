@@ -49,12 +49,12 @@ class Item(models.Model):
     watch = models.ForeignKey(
         Watch, verbose_name=_("watch"), on_delete=models.CASCADE, related_name="items"
     )
-    title = models.CharField(max_length=255, verbose_name=_("title"))
-    link = models.CharField(max_length=255, verbose_name=_("link"))
+    title = models.CharField(max_length=512, verbose_name=_("title"))
+    link = models.CharField(max_length=512, verbose_name=_("link"))
     description = models.TextField(verbose_name=_("description"))
-    uid = models.CharField(max_length=255, verbose_name=_("unique id"))
+    uid = models.CharField(max_length=512, verbose_name=_("unique id"))
     timestamp = models.DateTimeField(verbose_name=_("timestamp"))
-    image = models.CharField(max_length=255, verbose_name=_("image"), null=True)
+    image = models.CharField(max_length=512, verbose_name=_("image"), null=True)
     notified = models.BooleanField(default=False)
 
     class Meta:
