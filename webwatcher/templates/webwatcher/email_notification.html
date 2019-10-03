@@ -1,7 +1,14 @@
-<ul>
+<table>
     {% for item in items %}
-    <li>
-        <a href="{{ item.link }}">{{ item.title }}</a>
-    </li>
+    <tr>
+        <td>
+            <a href="{{ item.link }}">
+                <img src="{{ item.image }}" style="width: 100px; max-height: 200px;"/>
+            </a>
+        </td>
+        <td>
+            <a href="{{ item.link }}">{{ item.title }}</a>
+        </td>
+    </tr>
     {% endfor %}
-</ul>
+</table>
