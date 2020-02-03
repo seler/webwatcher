@@ -51,7 +51,7 @@ class OLX(Parser):
                 price = price_[0].text
 
             link = None
-            link_ = offer.cssselect(".title-cell")
+            link_ = offer.cssselect(".title-cell a")
             if link_:
                 link = link_[0].get("href")
 
