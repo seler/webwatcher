@@ -1,5 +1,6 @@
 from celery import shared_task
-from .models import Watch, Item
+
+from .models import Item, Watch
 from .sendmail import sendmail
 
 

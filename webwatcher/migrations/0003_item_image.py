@@ -5,15 +5,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('webwatcher', '0002_item'),
-    ]
+    dependencies = [("webwatcher", "0002_item")]
 
     operations = [
         migrations.AddField(
-            model_name='item',
-            name='image',
-            field=models.CharField(default='', max_length=255, verbose_name='image'),
+            model_name="item",
+            name="image",
+            field=models.CharField(default="", max_length=255, verbose_name="image"),
             preserve_default=False,
-        ),
+        )
     ]

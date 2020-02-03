@@ -116,6 +116,7 @@ STATIC_URL = "/static/"
 
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_CACHE_BACKEND = "django-cache"
-CELERY_BROKER_URL = "sqla+sqlite:///" + os.path.join(BASE_DIR, "db.sqlite3")
+CELERY_BROKER_URL = "sqla+sqlite:///" + os.path.join(BASE_DIR, "celery.sqlite3")
+# CELERY_BROKER_URL = "memory://"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

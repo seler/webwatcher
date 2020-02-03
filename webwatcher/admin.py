@@ -1,9 +1,10 @@
-from django.contrib import admin
-from .models import Watch, Item
-from django.utils.safestring import mark_safe
 from django import forms
-from django_celery_beat.models import PeriodicTask
+from django.contrib import admin
 from django.forms.models import fields_for_model
+from django.utils.safestring import mark_safe
+from django_celery_beat.models import PeriodicTask
+
+from .models import Item, Watch
 from .tasks import check
 
 periodic_task_field_names = ["interval", "crontab", "solar", "clocked", "enabled"]

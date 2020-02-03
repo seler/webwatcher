@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from .parser import get_parser_name_by_url, get_parser_by_name
+from .parser import get_parser_by_name, get_parser_name_by_url
 
 
 class Watch(models.Model):
