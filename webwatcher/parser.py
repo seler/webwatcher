@@ -3,8 +3,16 @@ import enum
 import re
 
 import requests
-from lxml import etree
+import enum
+from lxml import html
+import feedparser
+import dateparser
+import datetime
+import enum
+import re
 
+import requests
+from lxml import etree
 
 class Parser:
     def __init__(self, watch):
@@ -65,14 +73,48 @@ class OLX(Parser):
                 )
 
 
-class Allegro(Parser):
-    url_prog = re.compile("https?://(www.)?olx.pl.*")
-    name = "Allegro"
+class PageWithRSS(Parser):
+    def get_items(self):
+        from .models import Item
+
+        timestamp = datetime.datetime.now()
+
+        response = requests.get(self.watch.url)
+        content = html.fromstring(response.content.strip())
+        rss_link = content.xpath('*/link[@type="application/rss+xml"]')[0]
+        response = requests.get(rss_link.get("href"))
+        data = response.content.strip()
+        if data.find(b"<link>"):
+            # remove link as its cousing problems with feedparser
+            front = data[: data.find(b"<link>")]
+            back = data[data.find(b"</link>") + 7 :]  # noqa
+        data = front + back
+        feed = feedparser.parse(data)
+        for entry in feed.entries:
+            if "img" in entry.description:
+                image = html.fromstring(entry.description).findall("img")[0].get("src")
+            else:
+                image = None
+            yield Item(
+                watch=self.watch,
+                title=entry.title,
+                link=entry.link,
+                description=entry.description,
+                uid=entry.id,
+                timestamp=dateparser.parse(entry.published),
+                image=image,
+            )
+
+
+
+class OTOMOTO(PageWithRSS):
+    url_prog = re.compile("https?://(www.)?otomoto.pl.*")
+    name = "OTOMOTO"
 
 
 class Parsers(enum.Enum):
     olx = OLX
-    allegro = Allegro
+    otomoto = OTOMOTO
 
 
 def get_parser_name_by_url(url):

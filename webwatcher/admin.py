@@ -111,7 +111,7 @@ class ItemAdmin(admin.ModelAdmin):
     content.short_description = "content"
 
     def admin_image(self, obj):
-        return mark_safe(f'<img src="{obj.image}" style="height: 100px"/>')
+        return mark_safe(f'<img src="{obj.image}" style="width: 100px; max-height: 200px;"/>')
 
     admin_image.allow_tags = True
     admin_image.short_description = "image"
