@@ -84,7 +84,7 @@ class WatchAdmin(admin.ModelAdmin):
         periodic_task.args = f"[{obj.id}]"
         periodic_task.save()
 
-        check.delay(obj.id)
+        check.apply_async(args=[obj.id], countdown=5)
 
     def delete_model(self, request, obj):
         obj.delete()
@@ -103,6 +103,8 @@ class ItemAdmin(admin.ModelAdmin):
         "timestamp",
     )
     list_display = ("admin_image", "title", "link", "watch", "timestamp")
+    list_filter = ("watch", "timestamp")
+    date_hierarchy = "timestamp"
 
     def content(self, obj):
         return mark_safe(obj.description)

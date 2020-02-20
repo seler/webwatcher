@@ -2,7 +2,6 @@ import datetime
 import enum
 import re
 
-import dateparser
 import feedparser
 import requests
 from lxml import etree, html
@@ -95,7 +94,7 @@ class PageWithRSS(Parser):
                 link=entry.link,
                 description=entry.description,
                 uid=entry.id,
-                timestamp=dateparser.parse(entry.published),
+                timestamp=timestamp,
                 image=image,
             )
 
@@ -105,9 +104,50 @@ class OTOMOTO(PageWithRSS):
     name = "OTOMOTO"
 
 
+class Allegro(Parser):
+    url_prog = re.compile("https?://(www.)?allegro.pl.*")
+    name = "Allegro"
+
+    def get_items(self):
+        from .models import Item
+
+        timestamp = datetime.datetime.now()
+
+        response = requests.get(self.watch.url)
+        tree = etree.HTML(response.content.strip())
+        offers = tree.cssselect(".opbox-listing--base article")
+        for offer in offers:
+            image = None
+            img_ = offer.cssselect('div[data-role="offer-thumbnail"] img')
+            if img_:
+                image = img_[0].get("src")
+
+            title_ = offer.cssselect("h2 a")[0]
+            title = title_.text
+            link = title_.get("href")
+            uid = title_.get("href")
+
+            price = ""
+            # price_ = offer.cssselect(".price strong")
+            # if price_:
+            #     price = price_[0].text
+
+            if title and link:
+                yield Item(
+                    watch=self.watch,
+                    title=title,
+                    link=link,
+                    description=price,
+                    uid=uid,
+                    timestamp=timestamp,
+                    image=image,
+                )
+
+
 class Parsers(enum.Enum):
     olx = OLX
     otomoto = OTOMOTO
+    allegro = Allegro
 
 
 def get_parser_name_by_url(url):
